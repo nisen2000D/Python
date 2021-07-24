@@ -1,7 +1,11 @@
-num_and = 5 & 6
-num_or = 5 | 6
-num_xor = 5 ^ 6
-
-print(f'5 & 6 = {num_and}\n'
-      f'5 | 6 = {num_or}\n'
-      f'5 ^ 6 = {num_xor}')
+a = int(input('Введите число: '))
+even = 0
+odd = 0
+while a > 0:
+    if a % 2 == 0:
+        even += 1
+    else:
+        odd += 1
+    a = a // 10
+print("Чётных: %d" % (even))
+print("Нечётных: %d" % (odd))

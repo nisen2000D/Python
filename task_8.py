@@ -1,10 +1,11 @@
-year = int(input("Введите год:"))
-if year % 4 != 0:
-    print("Обычный год")
-elif year % 100 == 0:
-    if year % 400 == 0:
-        print("Високосный год")
-    else:
-        print("Обычный год")
-else:
-    print("Високосный год")
+num = int(input("Введите количество чисел: "))
+a = int(input("Какую цифру нужно посчитать: "))
+count = 0
+for i in range(1, num + 1):
+    m = int(input(f" {str(i)}) "))
+    while m > 0:
+        if m % 10 == a:
+            count += 1
+        m = m // 10
+
+print(f'{count} раз(а) была введена цифра {a}')
