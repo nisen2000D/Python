@@ -6,6 +6,6 @@ for i in range(1, num + 1):
     while m > 0:
         if m % 10 == a:
             count += 1
-        m = m // 10
+        m //= 10
 
 print(f'{count} раз(а) была введена цифра {a}')

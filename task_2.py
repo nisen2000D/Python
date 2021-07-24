@@ -6,6 +6,6 @@ while a > 0:
         even += 1
     else:
         odd += 1
-    a = a // 10
+    a //= 10
 print("Чётных: %d" % (even))
 print("Нечётных: %d" % (odd))
