@@ -7,9 +7,6 @@ while True:
     except:
         break
 
-second_list = []
-for i in range(len(first_list)):
-    if first_list[i] % 2 == 0:
-        second_list.append(i)
+second_list = [i for i in range(len(first_list)) if first_list[i] % 2 == 0]
 print(first_list)
 print('Индексы чётных чисел: ', second_list)

@@ -1,7 +1,5 @@
 from random import random
-a = []
-for i in range(10):
-    a.append(int(random() * 100))
+a = [int(random() * 100) for _ in range(10)]
 print(a)
 print()
 

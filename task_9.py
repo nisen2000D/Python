@@ -1,9 +1,9 @@
 from random import random
 
 a = []
-for i in range(4):
+for _ in range(4):
     b = []
-    for s in range(5):
+    for _ in range(5):
         n = int(random() * 100)
         b.append(n)
         print('%4d' % n, end='')

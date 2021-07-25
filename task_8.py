@@ -3,7 +3,7 @@ for i in range(4):
     l = []
     s = 0
     print(f"{i+1} строка:")
-    for j in range(5 - 1):
+    for _ in range(5 - 1):
         n = int(input())
         s += n
         l.append(n)

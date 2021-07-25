@@ -1,7 +1,5 @@
 from random import random
-a = []
-for i in range(10):
-    a.append(int(random() * 50))
+a = [int(random() * 50) for _ in range(10)]
 print(a)
 print()
 min_index = 0
@@ -14,7 +12,5 @@ for i in range(1,10):
 print(f'Min: {a[min_index]}  Max: {a[max_index]}')
 if min_index > max_index:
     min_index, max_index = max_index, min_index
-summa = 0
-for i in range(min_index+1, max_index):
-    summa += a[i]
+summa = sum(a[i] for i in range(min_index+1, max_index))
 print(f'Sum: {summa}')
