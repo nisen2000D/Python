@@ -1,10 +1,21 @@
-num = int(input('Введите количество элементов: '))
-a = 1
-b = 0
-for i in range(num):
-    b += a
-    y = i + 1
-    print(f' {y}) {a}')
-    a /= -2
+user = int(input('Вводите по одному числу (enter - закончить): '))
+a = []
+while True:
+    try:
+        a.append(user)
+        user = int(input('-- '))
+    except:
+        break
+print(a)
 
-print('Сумма: ', b)
+b = set(a)
+most_num = None
+quantity = 0
+
+for i in b:
+    q = a.count(i)
+    if q > quantity:
+        quantity = q
+        most_num = i
+
+print(most_num)

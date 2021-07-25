@@ -1,6 +1,15 @@
-n = int(input('Введие число: '))
-s = 0
-for i in range(1, n+1):
-    s += i
-m = round(n * (n + 1) / 2)
-print(f'{s}={m}')
+from random import random
+a = []
+for i in range(10):
+    a.append(int(random() * 100))
+print(a)
+print()
+
+if a[0] > a[1]:
+    min1 = 0
+    min2 = 1
+else:
+    min1 = 1
+    min2 = 0
+
+print(f'Наименьшие числа: {a[min1]} и {a[min2]}')

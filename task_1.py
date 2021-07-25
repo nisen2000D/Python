@@ -1,26 +1,9 @@
-while True:
-    try:
-        num_1, num_2 = map(int, input('Введите 2 числа: ').split())
-        sign = input('Введите знак: ')
-    except ValueError:
-        print('Неправильный ввод')
-        continue
-
-        # Проверка
-    if sign == '0':
-        print('Завершение')
-        break
-    elif sign == '+':
-        print(f'{num_1} {sign} {num_2} = {num_1 + num_2}')
-    elif sign == '-':
-        print(f'{num_1} {sign} {num_2} = {num_1 - num_2}')
-    elif sign == '*':
-        print(f'{num_1} {sign} {num_2} = {num_1 * num_2}')
-    elif sign == '/':
-        try:
-            print(f'{num_1} {sign} {num_2} = {num_1 / num_2}')
-        except ZeroDivisionError:
-            print('Ошибка. Деление на ноль')
-
-
-
+a = [0, 0, 0, 0, 0, 0, 0, 0]
+for i in range(2, 100):
+    for b in range(2, 10):
+        if i % b == 0:
+            a[b-2] += 1
+i = 0
+while i < 8:
+    print(f'Кратность числу {i+2} - {a[i]}')
+    i += 1

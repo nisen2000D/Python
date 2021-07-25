@@ -1,11 +1,14 @@
-num = int(input("Введите количество чисел: "))
-a = int(input("Какую цифру нужно посчитать: "))
-count = 0
-for i in range(1, num + 1):
-    m = int(input(f" {str(i)}) "))
-    while m > 0:
-        if m % 10 == a:
-            count += 1
-        m = m // 10
+my_list = []
+for i in range(4):
+    l = []
+    s = 0
+    print(f"{i+1} строка:")
+    for j in range(5 - 1):
+        n = int(input())
+        s += n
+        l.append(n)
+    l.append(s)
+    my_list.append(l)
 
-print(f'{count} раз(а) была введена цифра {a}')
+for i in my_list:
+    print(i)
