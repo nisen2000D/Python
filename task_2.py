@@ -9,12 +9,7 @@ def sum_hex(x, y):
     result = deque()
     transfer = 0
 
-    if len(y) > len(x):
-        x, y = deque(y), deque(x)
-
-    else:
-        x, y = deque(x), deque(y)
-
+    x, y = (deque(y), deque(x)) if len(y) > len(x) else (deque(x), deque(y))
     while x:
 
         if y:
@@ -60,11 +55,7 @@ def mult_hex(x, y):
     transfer = 0
 
     for _ in range(len(spam[-1])):
-        res = transfer
-
-        for i in range(len(spam)):
-            if spam[i]:
-                res += spam[i].pop()
+        res = transfer + sum(spam[i].pop() for i in range(len(spam)) if spam[i])
 
         if res < 16:
             result.appendleft(m_num[res])
