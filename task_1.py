@@ -1,37 +1,38 @@
-from collections import namedtuple
+# Версия Python: python 3.9.1 x32
+# Windows 10 x64
 
-QUARTERS = 4
-Company = namedtuple('Company', ['name', 'quarters', 'profit'])
-all_companies = set()
+import sys
 
-num = int(input("Введите количество предприятий: "))
-total_profit = 0
-for i in range(1, num + 1):
-    profit = 0
-    quarters = []
-    name = input(f'Введите название {i} предприятия : ')
+def show_size(x, level=0):
+    size_par = sys.getsizeof(x)
+    print('\t' * level, f'type={type(x)}, size={size_par}, object={x}')
+    if hasattr(x, '__iter__'):
+        if hasattr(x, 'items'):
+            for key, value in x.items():
+                show_size(key, level + 1)
+                size_par = size_par + sys.getsizeof(key)
+                show_size(value, level + 1)
+                size_par = size_par + sys.getsizeof(value)
+        elif not isinstance(x, str):
+            for item in x:
+                show_size(item, level + 1)
+                size_par = size_par + sys.getsizeof(item)
+    return size_par
 
-    for j in range(QUARTERS):
-        quarters.append(int(input(f'Прибыль за {j + 1}-ый квартал: ')))
-        profit += quarters[j]
 
-    comp = Company(name=name, quarters=tuple(quarters), profit=profit)
+# ЗАДАНИЕ: Сформировать из введенного числа обратное по порядку входящих в него цифр
+# и вывести на экран. Например, если введено число 3486, то надо вывести число 6843.
 
-    all_companies.add(comp)
-    total_profit += profit
+new_num = ''
 
-average = total_profit / num
-print('-'*100)
-print(f'Средняя прибыль всех предприятий: {average}')
+num = input('Введите число: ')
+count = len(num)
+k = range(count)
 
-print('-'*100)
-print(f'Предприятия с прибылью выше среднего:')
-for comp in all_companies:
-    if comp.profit > average:
-        print(f'Компания "{comp.name}" заработала: {comp.profit}')
+for i in k:
+    new_num = new_num + str(int(num) % 10)
+    num = int(num) // 10
+print(new_num)
 
-print('-'*100)
-print(f'Предприятия с прибылью ниже среднего:')
-for comp in all_companies:
-    if comp.profit < average:
-        print(f'Компания "{comp.name}" заработала: {comp.profit}')
+sum_member2 = show_size(new_num) + show_size(num) + show_size(count) + show_size(k)
+print('Выделено памяти: {}'.format(sum_member2))
