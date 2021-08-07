@@ -29,8 +29,8 @@ num = input('Введите число: ')
 count = len(num)
 k = range(count)
 
-for i in k:
-    new_num = new_num + str(int(num) % 10)
+for _ in k:
+    new_num += str(int(num) % 10)
     num = int(num) // 10
 print(new_num)
 
