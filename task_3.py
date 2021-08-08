@@ -11,26 +11,16 @@ def median(lst):
         center = []
 
         for i in lst:
-            b = 0
+            b = sum(i < j for j in lst)
 
-            for j in lst:
-
-                if i < j:
-                    b += 1
-
-            if len(lst) == b * 2 + 2 or len(lst) == b * 2:
+            if len(lst) in [b * 2 + 2, b * 2]:
                 center.append(i)
         return sum(center) / 2
 
     else:
         for i in lst:
             num = i
-            b = 0
-
-            for j in lst:
-
-                if i < j:
-                    b += 1
+            b = sum(num < j for j in lst)
 
             if len(lst) == 2 * b + 1:
                 return num

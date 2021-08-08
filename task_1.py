@@ -15,7 +15,7 @@ def sort_list(lst):
                 lst[i], lst[i + 1] = lst[i + 1], lst[i]
                 sorted = False
 
-        if sorted == True:
+        if sorted:
             break
 
         n += 1
