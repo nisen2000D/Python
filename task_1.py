@@ -1,38 +1,26 @@
-# Версия Python: python 3.9.1 x32
-# Windows 10 x64
+import random
 
-import sys
+lst = [random.randint(-100, 100) for i in range(10)]
+print(f'Список : {lst}')
 
-def show_size(x, level=0):
-    size_par = sys.getsizeof(x)
-    print('\t' * level, f'type={type(x)}, size={size_par}, object={x}')
-    if hasattr(x, '__iter__'):
-        if hasattr(x, 'items'):
-            for key, value in x.items():
-                show_size(key, level + 1)
-                size_par = size_par + sys.getsizeof(key)
-                show_size(value, level + 1)
-                size_par = size_par + sys.getsizeof(value)
-        elif not isinstance(x, str):
-            for item in x:
-                show_size(item, level + 1)
-                size_par = size_par + sys.getsizeof(item)
-    return size_par
+def sort_list(lst):
+    n = 1
+
+    while n < len(lst):
+        sorted = True
+
+        for i in range(len(lst) - n):
+
+            if lst[i] < lst[i + 1]:
+                lst[i], lst[i + 1] = lst[i + 1], lst[i]
+                sorted = False
+
+        if sorted == True:
+            break
+
+        n += 1
+
+    print(f'Отсортированный список: {lst}')
 
 
-# ЗАДАНИЕ: Сформировать из введенного числа обратное по порядку входящих в него цифр
-# и вывести на экран. Например, если введено число 3486, то надо вывести число 6843.
-
-new_num = ''
-
-num = input('Введите число: ')
-count = len(num)
-k = range(count)
-
-for i in k:
-    new_num = new_num + str(int(num) % 10)
-    num = int(num) // 10
-print(new_num)
-
-sum_member2 = show_size(new_num) + show_size(num) + show_size(count) + show_size(k)
-print('Выделено памяти: {}'.format(sum_member2))
+sort_list(lst)
