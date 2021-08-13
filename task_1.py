@@ -1,26 +1,9 @@
-import random
+user_str = str(input("Введите строку: "))
 
-lst = [random.randint(-100, 100) for i in range(10)]
-print(f'Список : {lst}')
+print(f'Длина строки "{user_str}": {len(user_str)} символов')
 
-def sort_list(lst):
-    n = 1
-
-    while n < len(lst):
-        sorted = True
-
-        for i in range(len(lst) - n):
-
-            if lst[i] < lst[i + 1]:
-                lst[i], lst[i + 1] = lst[i + 1], lst[i]
-                sorted = False
-
-        if sorted == True:
-            break
-
-        n += 1
-
-    print(f'Отсортированный список: {lst}')
-
-
-sort_list(lst)
+subs_set = set()
+for i in range(len(user_str)):
+    for j in range(len(user_str) - 1 if i == 0 else len(user_str), i, -1):
+        subs_set.add(hash(user_str[i:j]))
+print(f'Количество подстрок: {len(subs_set)}')

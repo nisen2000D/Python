@@ -1,36 +1,47 @@
-import random
+from collections import Counter, deque
+class MyNode:
 
-array = [round(random.uniform(1, 50)) for i in range(10)]
-print(f'Исходный массив: {array}')
+    def __init__(self, left=None, right=None):
+        self.left = left
+        self.right = right
 
 
-def merge_sort(a):
-    if len(a) < 2:
-        return a
-    left = merge_sort(a[:len(a) // 2])
-    right = merge_sort(a[len(a) // 2:len(a)])
+def haffman_tree(s):
 
-    i = j = k = 0
+    count_s = Counter(s)
 
-    while i < len(left) and j < len(right):
-        if left[i] < right[j]:
-            a[k] = left[i]
-            i = i + 1
+    sorted_s = deque(sorted(count_s.items(), key=lambda item: item[1]))
+
+    while len(sorted_s) > 1:
+
+        weight = sorted_s[0][1] + sorted_s[1][1]
+        node = MyNode(left=sorted_s.popleft()[0], right=sorted_s.popleft()[0])
+
+        for i, item in enumerate(sorted_s):
+            if weight > item[1]:
+                continue
+            else:
+                sorted_s.insert(i, (node, weight))
+                break
         else:
-            a[k] = right[j]
-            j = j + 1
-        k = k + 1
+            sorted_s.append((node, weight))
 
-    while i < len(left):
-        a[k] = left[i]
-        i = i + 1
-        k = k + 1
-
-    while j < len(right):
-        a[k] = right[j]
-        j = j + 1
-        k = k + 1
-    return a
+    return sorted_s[0][0]
 
 
-print(f'Отсортированный массив: {merge_sort(array)}')
+code_table = dict()
+
+
+def haffman_code(tree, path=''):
+
+    if not isinstance(tree, MyNode):
+        code_table[tree] = path
+
+    else:
+        haffman_code(tree.left, path=f'{path}0')
+        haffman_code(tree.right, path=f'{path}1')
+
+s = input('Введите строку: ')
+haffman_code(haffman_tree(s))
+for i in s:
+    print(code_table[i], end=' ')
