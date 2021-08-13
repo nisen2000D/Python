@@ -20,16 +20,15 @@ def haffman_tree(s):
         for i, item in enumerate(sorted_s):
             if weight > item[1]:
                 continue
-            else:
-                sorted_s.insert(i, (node, weight))
-                break
+            sorted_s.insert(i, (node, weight))
+            break
         else:
             sorted_s.append((node, weight))
 
     return sorted_s[0][0]
 
 
-code_table = dict()
+code_table = {}
 
 
 def haffman_code(tree, path=''):
