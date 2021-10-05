@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        'use strict';
+        //Сложение
+        function add(a, b) {
+            return a + b;
+        }
+        //Вычитание
+        function subtraction(a, b) {
+            return a - b;
+        }
+        //Деление
+        function division(a, b) {
+            return a / b;
+        }
+        //Умножение
+        function multiplication(a, b) {
+            return a * b;
+        }
+
+        function math(arg1, arg2, operation) {
+            switch (operation) {
+                case '+':
+                    return add(arg1, arg2);
+                case '-':
+                    return subtraction(arg1, arg2);
+                case '/':
+                    return division(arg1, arg2);
+                case '*':
+                    return multiplication(arg1, arg2);
+                default:
+                    throw new Error('Операция ' + operation + " не предусмотрена");
+            }
+        }
+        console.log(math(3, 5, "+"));
+        console.log(math(3, 5, "-"));
+        console.log(math(3, 5, "/"));
+        console.log(math(3, 5, "*"));
+        console.log(math(3, 5, "lorem"));
+    </script>
+</body>
+
+</html>

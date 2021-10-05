@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        'use strict';
+        //пример 1. Два плюса заменяет +1. Поэтому, если к b = 1 прибавить 1, то получится 2.
+        let a = 1, b = 1, c, d;
+        c = ++a;
+        alert(c); // ответ: 2
+
+        //пример 2. Два плюса ПОСЛЕ переменной. Поэтому в  переменную b записывается единица.
+        d = b++;
+        alert(d); //ответ: 1. 
+
+
+        //пример 3. a = 2, два плюса и переменная равна 3. К 2 прибавляем 3, равно 5.
+        c = 2 + ++a;
+        alert(c); //ответ: 5. 
+
+        //пример 4. b равно двум. Два плюса ПОСЛЕ переменной возвращает 2. К 2 прибавляем 2, получится 4.
+        d = 2 + b++;
+        alert(d); //ответ: 4
+        alert(a); //3
+        alert(b); //3
+    </script>
+</body>
+
+</html>
