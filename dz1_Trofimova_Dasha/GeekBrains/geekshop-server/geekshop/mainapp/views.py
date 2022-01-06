@@ -14,13 +14,11 @@ main_links_menu = [
 
 
 def get_basket_sum(request):
-    basket = []
-    if request.user.is_authenticated:
-        basket = request.user.basket.all()
+    basket = request.user.basket.all() if request.user.is_authenticated else []
     total = 0
     for product in basket:
         position = get_object_or_404(Product, pk=product.pk)
-        total = total + position.price * product.quantity
+        total += position.price * product.quantity
     return total
 
 
@@ -37,16 +35,12 @@ def get_hot_product():
 
     
 def get_same_products(hot_product):
-    same_products = Product.objects.filter(category=hot_product.category).\
+    return Product.objects.filter(category=hot_product.category).\
                                     exclude(pk=hot_product.pk)[:3]
-
-    return same_products
 
 def main(request):
     title = 'Главная'
-    basket = []
-    if request.user.is_authenticated:
-        basket = request.user.basket.all()
+    basket = request.user.basket.all() if request.user.is_authenticated else []
     content = {
             'title': title,
             'links_menu': main_links_menu,
@@ -58,9 +52,7 @@ def main(request):
 def products(request, pk=None):
     title = 'Категории'
     categories = ProductCategory.objects.all()
-    basket = []
-    if request.user.is_authenticated:
-        basket = request.user.basket.all()
+    basket = request.user.basket.all() if request.user.is_authenticated else []
     hot_product = get_hot_product()
     same_products = get_same_products(hot_product)
     if pk is not None:
@@ -82,23 +74,21 @@ def products(request, pk=None):
         }
         return render(request, 'mainapp/products.html', content)
     content = {
-        'title': title, 
-        'links_menu': main_links_menu, 
-        'same_products': same_products,
+        'title': title,
+        'links_menu': main_links_menu,
         'categories': categories,
         'basket': basket,
         'same_products': same_products,
         'hot_product': hot_product,
     }
+
     print(categories)
     return render(request, 'mainapp/catalog.html', content)
 
 
 def contact(request):
     title = 'Контакты'
-    basket = []
-    if request.user.is_authenticated:
-        basket = request.user.basket.all()
+    basket = request.user.basket.all() if request.user.is_authenticated else []
     content = {
             'title': title,
             'links_menu': main_links_menu,
@@ -121,7 +111,6 @@ def product(request, pk):
 
 
 def products(request, pk=None, page=1):
-    title = 'продукты'
     links_menu = ProductCategory.objects.filter(is_active=True)
     basket = getBasket(request.user)
 
@@ -146,6 +135,7 @@ def products(request, pk=None, page=1):
         except EmptyPage:
             products_paginator = paginator.page(paginator.num_pages)
 
+        title = 'продукты'
         content = {
             'title': title,
             'links_menu': links_menu,

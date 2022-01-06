@@ -19,7 +19,7 @@ def get_basket_sum(request):
     total = 0
     for product in basket:
         position = get_object_or_404(Product, pk=product.pk)
-        total = total + position.price * product.quantity
+        total += position.price * product.quantity
     return total
 
 
