@@ -14,17 +14,21 @@ Including another URL conf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import path
 import ordersapp.views as ordersapp
+from django.urls import re_path
 
-# обязательно добавить
-app_name = 'ordersapp'
+app_name="ordersapp"
 
 urlpatterns = [
-    path('', ordersapp.OrderList.as_view(), name='index'),
-    path('create/', ordersapp.OrderCreate.as_view(), name='order_create'),
-    path('update/<int:pk>/', ordersapp.OrderUpdate.as_view(), name='order_update'),
-    path('read/<int:pk>/', ordersapp.OrderDetail.as_view(), name='order_read'),
-    path('delete/<int:pk>/', ordersapp.OrderDelete.as_view(), name='order_delete'),
-    path('forming/complete/<int:pk>/', ordersapp.order_forming_complete, name='order_forming_complete'),
+   re_path(r'^$', ordersapp.OrderList.as_view(), name='orders_list'),
+   re_path(r'^forming/complete/(?P<pk>\d+)/$',
+           ordersapp.order_forming_complete, name='order_forming_complete'),
+   re_path(r'^create/$', ordersapp.OrderItemsCreate.as_view(),
+           name='order_create'),
+   re_path(r'^read/(?P<pk>\d+)/$', ordersapp.OrderRead.as_view(),
+           name='order_read'),
+   re_path(r'^update/(?P<pk>\d+)/$', ordersapp.OrderItemsUpdate.as_view(),
+           name='order_update'),
+   re_path(r'^delete/(?P<pk>\d+)/$', ordersapp.OrderDelete.as_view(),
+           name='order_delete'),
 ]

@@ -1,3 +1,35 @@
+Skip to content
+Why GitHub? 
+Team
+Enterprise
+Explore 
+Marketplace
+Pricing 
+Search
+Sign in
+Sign up
+radif-ru
+/
+Django_optimization_tools
+Public
+Code
+Issues
+Pull requests
+1
+Actions
+Projects
+Wiki
+Security
+Insights
+Django_optimization_tools/static/js/order_scripts.js /
+@radif-ru
+radif-ru lesson 5
+…
+Latest commit 12c72d6 on 8 Oct 2020
+ History
+ 1 contributor
+141 lines (120 sloc)  5.13 KB
+  
 "use strict";
 
 let _quantity, _price, orderitemNum, deltaQuantity, orderitemQuantity, deltaCost;
@@ -52,7 +84,7 @@ function orderSummaryRecalc() {
     orderTotalQuantity = 0;
     orderTotalCost = 0;
 
-    for (let i = 0; i < totalForms; i++) {
+    for (var i = 0; i < totalForms; i++) {
         orderTotalQuantity += quantityArr[i];
         orderTotalCost += quantityArr[i] * priceArr[i];
     }
@@ -94,12 +126,17 @@ window.onload = function () {
         orderSummaryUpdate(priceArr[orderitemNum], deltaQuantity);
     });
 
-    $('.formset_row').formset({
-        addText: 'выбрать еще колбаски',
-        deleteText: 'убрать',
-        prefix: 'orderitems',
-        removed: deleteOrderItem
-    });
+        $('.formset_row').formset({
+           addText: 'добавить продукт',
+           deleteText: 'удалить',
+           prefix: 'orderitems',
+           removed: deleteOrderItem
+        });
+
+    // $orderForm.on('change', 'select', function (event) {
+    //     let target = event.target;
+    //     console.log(target);
+    // });
 
     $('.order_form select').change(function (event) {
         let target = event.target;

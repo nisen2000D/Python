@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.utils.functional import cached_property
 
 from mainapp.models import Product
@@ -32,7 +32,7 @@ class Order(models.Model):
     is_active = models.BooleanField(verbose_name='активен', default=True, db_index=True)
 
     class Meta:
-        ordering = ('-created',)
+        ordering = ('-is_active', '-created',)
         verbose_name = 'заказ'
         verbose_name_plural = 'заказы'
 
@@ -51,10 +51,11 @@ class Order(models.Model):
     def total_quantity(self):
         return sum(list(map(lambda x: x.quantity, self.order_items)))
 
+    #
     # def get_product_type_quantity(self):
     #     items = self.orderitems.all()
     #     return len(items)
-
+    #
     @cached_property
     def total_cost(self):
         return sum(list(map(lambda x: x.quantity * x.product.price, self.order_items)))
@@ -67,12 +68,15 @@ class Order(models.Model):
             'total_quantity': sum(list(map(lambda x: x.quantity, items)))
         }
 
-    # переопределение метода, удаляющего объект
-    def delete(self, using=None, keep_parents=False):
-        for item in self.orderitems.select_related():
-            item.product.quantity += item.quantity
-            item.product.save()
-
+    # переопределяем метод, удаляющий объект
+    # def delete(self):
+    #     for item in self.orderitems.select_related():
+    #         item.product.quantity += item.quantity
+    #         item.product.save()
+    #
+    #     self.is_active = False
+    #     self.save()
+    def delete(self, **kwargs):
         self.is_active = False
         self.status = self.CANCEL
         self.save()
@@ -100,3 +104,4 @@ class OrderItem(models.Model):
     @classmethod
     def get_item(cls, pk):
         return cls.objects.filter(pk=pk).first()
+

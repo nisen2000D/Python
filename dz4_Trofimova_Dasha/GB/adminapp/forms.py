@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 import django.forms as forms
 
-from authapp.models import ShopClient
+from authapp.models import ShopUser
 from mainapp.models import ProductCategory, Product
 
 
@@ -15,7 +15,7 @@ class FormControlMixin:
 
 class AdminShopUserRegisterForm(FormControlMixin, UserCreationForm):
     class Meta:
-        model = ShopClient
+        model = ShopUser
         fields = (
             'username', 'first_name', 'last_name', 'is_superuser', 'is_staff',
             'password1', 'password2', 'email', 'age', 'avatar'
@@ -30,7 +30,7 @@ class AdminShopUserRegisterForm(FormControlMixin, UserCreationForm):
 
 class AdminShopUserUpdateForm(UserChangeForm):
     class Meta:
-        model = ShopClient
+        model = ShopUser
         fields = (
             'username', 'first_name', 'last_name', 'is_superuser', 'is_staff',
             'is_active', 'password', 'email', 'age', 'avatar'

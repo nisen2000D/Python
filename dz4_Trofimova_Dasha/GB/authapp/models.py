@@ -65,6 +65,7 @@ class ShopClientProfile(models.Model):
     aboutMe = models.TextField(verbose_name='о себе', max_length=512, blank=True)
     gender = models.CharField(verbose_name='пол', max_length=1, choices=GENDER_CHOICES, blank=True)
     age = models.PositiveIntegerField(verbose_name='возраст', default=18)
+    langs = models.CharField(verbose_name='язык', blank=True, null=True, max_length=10)
 
 
 class ShopUserProfile(models.Model):
