@@ -132,11 +132,8 @@ class ProductCategoryUpdate(OnlySuperUserMixin, PageTitleMixin, UpdateView):
 
     def form_valid(self, form):
         if 'discount' in form.cleaned_data:
-            discount = form.cleaned_data['discount']
-            if discount:
+            if discount := form.cleaned_data['discount']:
                 self.object.product_set.update(price=F('price') * (1 - discount / 100))
-                # db_profile_by_type(self.model, 'UPDATE', connection.queries)
-
         return super().form_valid(form)
 
 
