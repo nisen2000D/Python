@@ -26,3 +26,8 @@ class Product(models.Model):
     @classmethod
     def get_items(cls):
         return cls.objects.filter(is_active=True)
+
+    @staticmethod
+    def get_items():
+        return Product.objects.filter(is_active=True). \
+            order_by('category', 'name')
