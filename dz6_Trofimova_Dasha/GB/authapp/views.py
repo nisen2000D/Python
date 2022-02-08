@@ -50,10 +50,9 @@ def register(request):
             user = form.save()
             if user.send_verify_mail():
                 print('На Вашу почту отправлено сообщение подтверждения аккаунта')
-                return HttpResponseRedirect(reverse('auth:login'))
             else:
                 print('Ошибка отправки сообщения')
-                return HttpResponseRedirect(reverse('auth:login'))
+            return HttpResponseRedirect(reverse('auth:login'))
     else:
         form = ShopRegistrationForm()
 
@@ -92,10 +91,9 @@ def verify(request, email, activation_key):
             user.is_active = True
             user.save()
             auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            return render(request, 'authapp/verification.html')
         else:
             print(f'Ошибка активации пользователя: {user}')
-            return render(request, 'authapp/verification.html')
+        return render(request, 'authapp/verification.html')
     except Exception as err:
         print(f'Ошибка активации пользователя: {err.args}')
         return HttpResponseRedirect(reverse('main'))

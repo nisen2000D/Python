@@ -13,15 +13,14 @@ from shop.settings import BASE_DIR, JSON_PATH
 
 
 def get_products():
-    if settings.LOW_CACHE:
-        key = 'products'
-        products = cache.get(key)
-        if products is None:
-            products = Product.objects.filter(is_active=True, category__is_active=True).select_related('category')
-            cache.set(key, products)
-        return products
-    else:
+    if not settings.LOW_CACHE:
         return Product.objects.filter(is_active=True, category__is_active=True).select_related('category')
+    key = 'products'
+    products = cache.get(key)
+    if products is None:
+        products = Product.objects.filter(is_active=True, category__is_active=True).select_related('category')
+        cache.set(key, products)
+    return products
 
 
 def get_hot_product():
@@ -121,6 +120,5 @@ def main(request):
     return render(request, 'mainapp/index.html', content)
 
 def load_from_json(file_name):
-   with open(os.path.join(JSON_PATH, file_name + '.json'), 'r',\
-             errors='ignore') as infile:
-       return json.load(infile)
+    with open(os.path.join(JSON_PATH, f'{file_name}.json'), 'r', errors='ignore') as infile:
+        return json.load(infile)
