@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'y=k55+osbv7y7rt=2uj=a_)1%8k0epv#*8g=m0-+-n2*w0pz!n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'adminapp',
     'social_django',
     'ordersapp',
+    'debug_toolbar',
+    'template_profiler_panel',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 # только для dev-server
@@ -168,6 +172,12 @@ STATICFILES_DIRS = (
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+USERS_AVATARS = 'users_avatars'
+
+AUTH_USER_MODEL = 'authapp.ShopUser'
+
+JSON_PATH = 'json'
 
 # constant model of user
 AUTH_USER_MODEL = 'authapp.ShopUser'

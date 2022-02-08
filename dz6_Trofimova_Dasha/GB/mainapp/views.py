@@ -1,12 +1,15 @@
-from random import choice
+import json
+import os
 
 from django.core.cache import cache
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 
-from mainapp.models import ProductCategory, Product
 from shop import settings
+from mainapp.models import ProductCategory, Product
+from shop.settings import BASE_DIR, JSON_PATH
+
 
 
 def get_products():
@@ -101,3 +104,23 @@ def product_price(request, pk):
     if request.is_ajax():
         product = Product.objects.filter(pk=pk).first()
         return JsonResponse({'price': product and product_price or 0})
+
+
+def main(request):
+    title = 'главная'
+
+    products = Product.objects.\
+                          filter(is_active=True, category__is_active=True).\
+                          select_related('category')[:3]
+
+    content = {
+        'title': title,
+        'products': products,
+    }
+
+    return render(request, 'mainapp/index.html', content)
+
+def load_from_json(file_name):
+   with open(os.path.join(JSON_PATH, file_name + '.json'), 'r',\
+             errors='ignore') as infile:
+       return json.load(infile)

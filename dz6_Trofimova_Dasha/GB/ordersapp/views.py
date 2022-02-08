@@ -4,12 +4,13 @@ from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.dispatch import receiver
 from django.db.models.signals import pre_save, pre_delete
 from django.http import JsonResponse
 from mainapp.models import Product
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 from ordersapp.forms import OrderForm, OrderItemForm
 from ordersapp.models import Order, OrderItem
@@ -22,11 +23,15 @@ class OnlyLoggedUserMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-class OrderList(OnlyLoggedUserMixin, ListView):
-    model = Order
+class OrderList(ListView):
+   model = Order
 
-    def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+   def get_queryset(self):
+       return Order.objects.filter(user=self.request.user)
+
+   @method_decorator(login_required())
+   def dispatch(self, *args, **kwargs):
+       return super(ListView, self).dispatch(*args, **kwargs)
 
 
 class OrderCreate(OnlyLoggedUserMixin, CreateView):
@@ -101,7 +106,7 @@ class OrderUpdate(OnlyLoggedUserMixin, UpdateView):
                 if form.instance.pk:
                     form.initial['price'] = form.instance.product.price
             data['orderitems'] = formset
-        data['orderitems'] = formset
+            data['orderitems'] = formset
         return data
 
     def form_valid(self, form):  # проверяет и сохраняет форму
