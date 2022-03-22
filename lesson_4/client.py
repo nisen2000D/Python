@@ -27,14 +27,13 @@ def create_presence_message(account_name='Guest'):
     if not isinstance(account_name, str):
         raise TypeError
 
-    message = {
+    return {
         ACTION: PRESENCE,
         TIME: time.time(),
         USER: {
             ACCOUNT_NAME: account_name
         }
     }
-    return message
 
 
 def start_client():
