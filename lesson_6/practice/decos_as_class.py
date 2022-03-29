@@ -79,6 +79,5 @@ class Log:
             self.logger.filters.remove(new_filter)
             print('List of filters after removing new_filter: ', self.logger.filters)
 
-            result = func(*args, **kwargs)
-            return result
+            return func(*args, **kwargs)
         return wrapper
