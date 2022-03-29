@@ -22,14 +22,13 @@ from config import *
 
 
 def create_presence_message(account_name='Guest'):
-    message = {
+    return {
         ACTION: PRESENCE,
         TIME: time.time(),
         USER: {
             ACCOUNT_NAME: account_name
         }
     }
-    return message
 
 
 def start_client():
