@@ -42,9 +42,7 @@ def process_ans(message):
     """
     CLIENT_LOGGER.debug(f'Разбор сообщения от сервера: {message}')
     if RESPONSE in message:
-        if message[RESPONSE] == 200:
-            return '200 : OK'
-        return f'400 : {message[ERROR]}'
+        return '200 : OK' if message[RESPONSE] == 200 else f'400 : {message[ERROR]}'
     raise ReqFieldMissingError(RESPONSE)
 
 

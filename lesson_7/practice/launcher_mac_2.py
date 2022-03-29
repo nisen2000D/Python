@@ -43,7 +43,7 @@ while True:
 
         # P_LIST.append(get_subprocess("server.py"))
         time.sleep(0.5)
-        for i in range(CLIENTS_COUNT):
+        for _ in range(CLIENTS_COUNT):
             P_LIST.append(get_subprocess("client.py"))
             time.sleep(1)
             P_LIST.append(get_subprocess('client.py', '--mode send'))
