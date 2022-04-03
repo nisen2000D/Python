@@ -16,13 +16,12 @@ def get_message(client):
     :return:
     """
     encoded_response = client.recv(MAX_PACKAGE_LENGTH)
-    if isinstance(encoded_response, bytes):
-        json_response = encoded_response.decode(ENCODING)
-        response = json.loads(json_response)
-        if isinstance(response, dict):
-            return response
-        else:
-            raise IncorrectDataRecivedError
+    if not isinstance(encoded_response, bytes):
+        raise IncorrectDataRecivedError
+    json_response = encoded_response.decode(ENCODING)
+    response = json.loads(json_response)
+    if isinstance(response, dict):
+        return response
     else:
         raise IncorrectDataRecivedError
 

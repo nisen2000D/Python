@@ -12,14 +12,14 @@ pathOfFile=path.dirname(__file__)
 pathServer=path.join(pathOfFile, "server.py")
 pathClient=path.join(pathOfFile, "client.py")
 pathToScriptServer = path.join(pathOfFile, "start","startServer")
-pathToScriptClients = path.join(pathOfFile, "start","startClient")    
+pathToScriptClients = path.join(pathOfFile, "start","startClient")
 print (pathClient)
 
 while True:
     choice = input("q - запуск сервера, w - остановка сервера, e - запуск 4 клиентов, r - остановка клиентов, t - остановить все, y - остановить все и выйти")
-    
 
-        
+
+
     if choice=="q":
         print ("Запустили сервер")
         server = Popen(f"open -n -a Terminal.app '{pathToScriptServer}'", shell=True)
@@ -35,13 +35,13 @@ while True:
                 #остался только слушающий клиент
                 time.sleep(0.5)
                 clients.append(Popen(f"open -n -a Terminal.app '{pathToScriptClients}{i}r'", shell=True)) 
-                            
+
     elif choice == "r":
-        for i in range(len(clients)):
-            print(clients[i])
-            clients[i].kill()
+        for client_ in clients:
+            print(client_)
+            client_.kill()
     elif choice == "y":
-        for i in range(len(clients)):
-            clients[i].kill()        
+        for client in clients:
+            client.kill()
         server.kill()
         break

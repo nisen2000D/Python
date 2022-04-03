@@ -45,10 +45,9 @@ def message_from_server(sock, my_username):
             else:
                 LOGGER.error(f'Получено некорректное сообщение с сервера: {message}')
         except IncorrectDataRecivedError:
-            LOGGER.error(f'Не удалось декодировать полученное сообщение.')
-        except (OSError, ConnectionError, ConnectionAbortedError,
-                ConnectionResetError, json.JSONDecodeError):
-            LOGGER.critical(f'Потеряно соединение с сервером.')
+            LOGGER.error('Не удалось декодировать полученное сообщение.')
+        except (OSError, json.JSONDecodeError):
+            LOGGER.critical('Потеряно соединение с сервером.')
             break
 
 
@@ -184,7 +183,7 @@ def main():
         send_message(transport, create_presence(client_name))
         answer = process_response_ans(get_message(transport))
         LOGGER.info(f'Установлено соединение с сервером. Ответ сервера: {answer}')
-        print(f'Установлено соединение с сервером.')
+        print('Установлено соединение с сервером.')
     except json.JSONDecodeError:
         LOGGER.error('Не удалось декодировать полученную Json строку.')
         sys.exit(1)
@@ -194,7 +193,7 @@ def main():
     except ReqFieldMissingError as missing_error:
         LOGGER.error(f'В ответе сервера отсутствует необходимое поле {missing_error.missing_field}')
         sys.exit(1)
-    except (ConnectionRefusedError, ConnectionError):
+    except ConnectionError:
         LOGGER.critical(
             f'Не удалось подключиться к серверу {server_address}:{server_port}, '
             f'конечный компьютер отверг запрос на подключение.')

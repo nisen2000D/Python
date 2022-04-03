@@ -23,8 +23,8 @@ def get_subprocess(file_with_args):
 
 
 process = []
+TEXT_FOR_INPUT = "Выберите действие: q - выход, s - запустить сервер и клиенты, x - закрыть все окна: "
 while True:
-    TEXT_FOR_INPUT = "Выберите действие: q - выход, s - запустить сервер и клиенты, x - закрыть все окна: "
     action = input(TEXT_FOR_INPUT)
 
     if action == "q":
@@ -32,9 +32,7 @@ while True:
     elif action == "s":
         process.append(get_subprocess("server.py"))
 
-        for i in range(2):
-            process.append(get_subprocess(f"client.py -n test{i+1}"))
-
+        process.extend(get_subprocess(f"client.py -n test{i+1}") for i in range(2))
     elif action == "x":
         while process:
             victim = process.pop()
