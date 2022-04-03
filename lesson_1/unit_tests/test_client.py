@@ -36,7 +36,10 @@ class TestClient(unittest.TestCase):
 
     def test_process_answer_res_400(self):
         """Тест корректного разбора 400"""
-        self.assertEqual(process_answer({RESPONSE: 400, ERROR: 'Bad Request'}), f'400 : Bad Request')
+        self.assertEqual(
+            process_answer({RESPONSE: 400, ERROR: 'Bad Request'}),
+            '400 : Bad Request',
+        )
 
     def test_process_answer_res_not(self):
         """Тест исключения без поля RESPONSE"""
