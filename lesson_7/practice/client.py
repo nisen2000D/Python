@@ -125,7 +125,7 @@ def main():
         send_message(transport, create_presence())
         answer = process_response_ans(get_message(transport))
         LOGGER.info(f'Установлено соединение с сервером. Ответ сервера: {answer}')
-        print(f'Установлено соединение с сервером.')
+        print('Установлено соединение с сервером.')
     except json.JSONDecodeError:
         LOGGER.error('Не удалось декодировать полученную Json строку.')
         sys.exit(1)
@@ -153,7 +153,7 @@ def main():
             if client_mode == 'send':
                 try:
                     send_message(transport, create_message(transport))
-                except (ConnectionResetError, ConnectionError, ConnectionAbortedError):
+                except ConnectionError:
                     LOGGER.error(f'Соединение с сервером {server_address} было потеряно.')
                     sys.exit(1)
 
@@ -161,7 +161,7 @@ def main():
             if client_mode == 'listen':
                 try:
                     message_from_server(get_message(transport))
-                except (ConnectionResetError, ConnectionError, ConnectionAbortedError):
+                except ConnectionError:
                     LOGGER.error(f'Соединение с сервером {server_address} было потеряно.')
                     sys.exit(1)
 

@@ -31,19 +31,16 @@ def process_client_message(message, messages_list, client):
     if ACTION in message and message[ACTION] == PRESENCE and TIME in message \
             and USER in message and message[USER][ACCOUNT_NAME] == 'Guest':
         send_message(client, {RESPONSE: 200})
-        return
-    # Если это сообщение, то добавляем его в очередь сообщений. Ответ не требуется.
     elif ACTION in message and message[ACTION] == MESSAGE and \
             TIME in message and MESSAGE_TEXT in message:
         messages_list.append((message[ACCOUNT_NAME], message[MESSAGE_TEXT]))
-        return
-    # Иначе отдаём Bad request
     else:
         send_message(client, {
             RESPONSE: 400,
             ERROR: 'Bad Request'
         })
-        return
+
+    return
 
 
 @log
@@ -93,7 +90,6 @@ def main():
             client, client_address = transport.accept()
         except OSError as err:
             print(err.errno)  # The error number returns None because it's just a timeout 
-            pass
         else:
             LOGGER.info(f'Установлено соедение с ПК {client_address}')
             clients.append(client)
