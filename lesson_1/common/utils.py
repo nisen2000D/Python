@@ -17,13 +17,12 @@ def get_message(sock):
     """
 
     encoded_response = sock.recv(MAX_PACKAGE_LENGTH)
-    if isinstance(encoded_response, bytes):
-        json_response = encoded_response.decode(ENCODING)
-        response = json.loads(json_response)
-        if isinstance(response, dict):
-            return response
-        else:
-            raise IncorrectDataReceivedError
+    if not isinstance(encoded_response, bytes):
+        raise IncorrectDataReceivedError
+    json_response = encoded_response.decode(ENCODING)
+    response = json.loads(json_response)
+    if isinstance(response, dict):
+        return response
     else:
         raise IncorrectDataReceivedError
 
