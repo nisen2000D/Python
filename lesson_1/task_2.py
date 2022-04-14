@@ -33,13 +33,11 @@ def host_range_ping():
         quantity_ip = input('Сколько адресов проверить?: ')
         if not quantity_ip.isnumeric():
             print('Необходимо ввести число: ')
+        elif (last_octet+int(quantity_ip)) > 254:
+            print(f"Можем менять только последний октет, т.е. "
+                  f"максимальное число хостов для проверки: {254-last_octet}")
         else:
-            # по условию меняется только последний октет
-            if (last_octet+int(quantity_ip)) > 254:
-                print(f"Можем менять только последний октет, т.е. "
-                      f"максимальное число хостов для проверки: {254-last_octet}")
-            else:
-                break
+            break
 
     host_list = []
     # формируем список ip адресов
