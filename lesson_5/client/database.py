@@ -117,17 +117,13 @@ class ClientDatabase:
 
     # Функция проверяющяя наличие пользователя в известных
     def check_user(self, user):
-        if self.session.query(self.KnownUsers).filter_by(username=user).count():
-            return True
-        else:
-            return False
+        return bool(
+            self.session.query(self.KnownUsers).filter_by(username=user).count()
+        )
 
     # Функция проверяющяя наличие пользователя контактах
     def check_contact(self, contact):
-        if self.session.query(self.Contacts).filter_by(name=contact).count():
-            return True
-        else:
-            return False
+        return bool(self.session.query(self.Contacts).filter_by(name=contact).count())
 
     # Функция возвращающая историю переписки
     def get_history(self, contact):
