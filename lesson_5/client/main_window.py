@@ -83,9 +83,7 @@ class ClientMainWindow(QMainWindow):
         self.history_model.clear()
         # Берём не более 20 последних записей.
         length = len(list)
-        start_index = 0
-        if length > 20:
-            start_index = length - 20
+        start_index = length - 20 if length > 20 else 0
         # Заполнение модели записями, так-же стоит разделить входящие и исходящие выравниванием и разным фоном.
         # Записи в обратном порядке, поэтому выбираем их с конца и не более 20
         for i in range(start_index, length):
@@ -95,13 +93,12 @@ class ClientMainWindow(QMainWindow):
                 mess.setEditable(False)
                 mess.setBackground(QBrush(QColor(255, 213, 213)))
                 mess.setTextAlignment(Qt.AlignLeft)
-                self.history_model.appendRow(mess)
             else:
                 mess = QStandardItem(f'Исходящее от {item[3].replace(microsecond=0)}:\n {item[2]}')
                 mess.setEditable(False)
                 mess.setTextAlignment(Qt.AlignRight)
                 mess.setBackground(QBrush(QColor(204, 255, 204)))
-                self.history_model.appendRow(mess)
+            self.history_model.appendRow(mess)
         self.ui.list_messages.scrollToBottom()
 
     # Функция обработчик даблклика по контакту
@@ -203,7 +200,6 @@ class ClientMainWindow(QMainWindow):
             return
         try:
             self.transport.send_message(self.current_chat, message_text)
-            pass
         except ServerError as err:
             self.messages.critical(self, 'Ошибка', err.text)
         except OSError as err:
@@ -211,9 +207,6 @@ class ClientMainWindow(QMainWindow):
                 self.messages.critical(self, 'Ошибка', 'Потеряно соединение с сервером!')
                 self.close()
             self.messages.critical(self, 'Ошибка', 'Таймаут соединения!')
-        except (ConnectionResetError, ConnectionAbortedError):
-            self.messages.critical(self, 'Ошибка', 'Потеряно соединение с сервером!')
-            self.close()
         else:
             self.database.save_message(self.current_chat, 'out', message_text)
             logger.debug(f'Отправлено сообщение для {self.current_chat}: {message_text}')
@@ -224,25 +217,23 @@ class ClientMainWindow(QMainWindow):
     def message(self, sender):
         if sender == self.current_chat:
             self.history_list_update()
+        elif self.database.check_contact(sender):
+            # Если есть, спрашиваем и желании открыть с ним чат и открываем при желании
+            if self.messages.question(self, 'Новое сообщение', \
+                                      f'Получено новое сообщение от {sender}, открыть чат с ним?', QMessageBox.Yes,
+                                      QMessageBox.No) == QMessageBox.Yes:
+                self.current_chat = sender
+                self.set_active_user()
         else:
-            # Проверим есть ли такой пользователь у нас в контактах:
-            if self.database.check_contact(sender):
-                # Если есть, спрашиваем и желании открыть с ним чат и открываем при желании
-                if self.messages.question(self, 'Новое сообщение', \
-                                          f'Получено новое сообщение от {sender}, открыть чат с ним?', QMessageBox.Yes,
-                                          QMessageBox.No) == QMessageBox.Yes:
-                    self.current_chat = sender
-                    self.set_active_user()
-            else:
-                print('NO')
-                # Раз нету,спрашиваем хотим ли добавить юзера в контакты.
-                if self.messages.question(self, 'Новое сообщение', \
-                                          f'Получено новое сообщение от {sender}.\n Данного пользователя нет в вашем контакт-листе.\n Добавить в контакты и открыть чат с ним?',
-                                          QMessageBox.Yes,
-                                          QMessageBox.No) == QMessageBox.Yes:
-                    self.add_contact(sender)
-                    self.current_chat = sender
-                    self.set_active_user()
+            print('NO')
+            # Раз нету,спрашиваем хотим ли добавить юзера в контакты.
+            if self.messages.question(self, 'Новое сообщение', \
+                                      f'Получено новое сообщение от {sender}.\n Данного пользователя нет в вашем контакт-листе.\n Добавить в контакты и открыть чат с ним?',
+                                      QMessageBox.Yes,
+                                      QMessageBox.No) == QMessageBox.Yes:
+                self.add_contact(sender)
+                self.current_chat = sender
+                self.set_active_user()
 
     # Слот потери соединения
     # Выдаёт сообщение о ошибке и завершает работу приложения
