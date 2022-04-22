@@ -23,12 +23,12 @@ class ServerMaker(type):
                 # Раз функция разбираем код, получая используемые методы и
                 # атрибуты.
                 for i in ret:
-                    if i.opname == 'LOAD_GLOBAL':
-                        if i.argval not in methods:
-                            methods.append(i.argval)
-                    elif i.opname == 'LOAD_ATTR':
+                    if i.opname == 'LOAD_ATTR':
                         if i.argval not in attrs:
                             attrs.append(i.argval)
+                    elif i.opname == 'LOAD_GLOBAL':
+                        if i.argval not in methods:
+                            methods.append(i.argval)
         # Если обнаружено использование недопустимого метода connect,
         # генерируем исключение:
         if 'connect' in methods:
@@ -36,7 +36,7 @@ class ServerMaker(type):
                 'Использование метода connect недопустимо в серверном классе')
         # Если сокет не инициализировался константами SOCK_STREAM(TCP)
         # AF_INET(IPv4), тоже исключение.
-        if not ('SOCK_STREAM' in attrs and 'AF_INET' in attrs):
+        if 'SOCK_STREAM' not in attrs or 'AF_INET' not in attrs:
             raise TypeError('Некорректная инициализация сокета.')
         super().__init__(clsname, bases, clsdict)
 
@@ -60,9 +60,8 @@ class ClientMaker(type):
             else:
                 # Раз функция разбираем код, получая используемые методы.
                 for i in ret:
-                    if i.opname == 'LOAD_GLOBAL':
-                        if i.argval not in methods:
-                            methods.append(i.argval)
+                    if i.opname == 'LOAD_GLOBAL' and i.argval not in methods:
+                        methods.append(i.argval)
         # Если обнаружено использование недопустимого метода accept, listen,
         # socket бросаем исключение:
         for command in ('accept', 'listen', 'socket'):
@@ -71,9 +70,7 @@ class ClientMaker(type):
                     'В классе обнаружено использование запрещённого метода')
         # Вызов get_message или send_message из utils считаем корректным
         # использованием сокетов
-        if 'get_message' in methods or 'send_message' in methods:
-            pass
-        else:
+        if 'get_message' not in methods and 'send_message' not in methods:
             raise TypeError(
                 'Отсутствуют вызовы функций, работающих с сокетами.')
         super().__init__(clsname, bases, clsdict)

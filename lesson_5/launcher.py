@@ -1,5 +1,6 @@
 """Программа-лаунчер"""
 
+
 import subprocess
 
 process = []
@@ -14,9 +15,14 @@ while True:
     elif action == 'k':
         clients_count = int(input('Введите количество тестовых клиентов для запуска: '))
         # Запускаем клиентов:
-        for i in range(clients_count):
-            process.append(
-                subprocess.Popen(f'python client.py -n test{i + 1}', creationflags=subprocess.CREATE_NEW_CONSOLE))
+        process.extend(
+            subprocess.Popen(
+                f'python client.py -n test{i + 1}',
+                creationflags=subprocess.CREATE_NEW_CONSOLE,
+            )
+            for i in range(clients_count)
+        )
+
     elif action == 'x':
         while process:
             process.pop().kill()
