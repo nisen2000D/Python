@@ -23,9 +23,8 @@ class Finder:
         print("-->>", url)
         f = urlopen(url)
         data = f.read().decode('utf-8')
-        pattern = "<p>.*?{}.*?</p>".format(self.text)
-        res = re.findall(pattern, data)
-        return res
+        pattern = f"<p>.*?{self.text}.*?</p>"
+        return re.findall(pattern, data)
 
     def _in_urls(self, urls):
         ''' Поиск текста по списку urls
