@@ -196,19 +196,15 @@ class ClientReader(threading.Thread, metaclass=ClientMaker):
                 try:
                     message = get_message(self.sock)
 
-                # Принято некорректное сообщение
                 except IncorrectDataReceivedError:
-                    CLIENT_LOGGER.error(f'Не удалось декодировать полученное сообщение.')
-                # Вышел таймаут соединения если errno = None, иначе обрыв соединения.
+                    CLIENT_LOGGER.error('Не удалось декодировать полученное сообщение.')
                 except OSError as err:
                     if err.errno:
-                        CLIENT_LOGGER.critical(f'Потеряно соединение с сервером.')
+                        CLIENT_LOGGER.critical('Потеряно соединение с сервером.')
                         break
-                # Проблемы с соединением
-                except (ConnectionError, ConnectionAbortedError, ConnectionResetError, json.JSONDecodeError):
-                    CLIENT_LOGGER.critical(f'Потеряно соединение с сервером.')
+                except (ConnectionError, json.JSONDecodeError):
+                    CLIENT_LOGGER.critical('Потеряно соединение с сервером.')
                     break
-                # Если пакет корретно получен выводим в консоль и записываем в базу.
                 else:
                     if ACTION in message and message[ACTION] == MESSAGE and SENDER in message and DESTINATION in message \
                             and MESSAGE_TEXT in message and message[DESTINATION] == self.account_name:
@@ -313,9 +309,7 @@ def add_contact(sock, username, contact):
     }
     send_message(sock, req)
     ans = get_message(sock)
-    if RESPONSE in ans and ans[RESPONSE] == 200:
-        pass
-    else:
+    if RESPONSE not in ans or ans[RESPONSE] != 200:
         raise ServerError('Ошибка создания контакта')
     print('Удачное создание контакта.')
 
@@ -347,9 +341,7 @@ def remove_contact(sock, username, contact):
     }
     send_message(sock, req)
     ans = get_message(sock)
-    if RESPONSE in ans and ans[RESPONSE] == 200:
-        pass
-    else:
+    if RESPONSE not in ans or ans[RESPONSE] != 200:
         raise ServerError('Ошибка удаления клиента')
     print('Удачное удаление')
 
@@ -402,7 +394,7 @@ def main():
         send_message(client_socket, create_new_presence(client_name))
         answer = process_response_answer(get_message(client_socket))
         CLIENT_LOGGER.info(f'Установлено соединение с сервером. Ответ сервера: {answer}')
-        print(f'Установлено соединение с сервером.')
+        print('Установлено соединение с сервером.')
     except json.JSONDecodeError:
         CLIENT_LOGGER.error('Не удалось декодировать полученную Json строку.')
         exit(1)
@@ -412,7 +404,7 @@ def main():
     except ReqFieldMissingError as missing_error:
         CLIENT_LOGGER.error(f'В ответе сервера отсутствует необходимое поле {missing_error.missing_field}')
         exit(1)
-    except (ConnectionRefusedError, ConnectionError):
+    except ConnectionError:
         CLIENT_LOGGER.critical(
             f'Не удалось подключиться к серверу {server_address}:{server_port}, '
             f'конечный компьютер отверг запрос на подключение.')

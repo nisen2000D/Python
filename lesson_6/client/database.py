@@ -139,19 +139,13 @@ class ClientDatabase:
 
     def check_user(self, user):
         '''Метод проверяющий существует ли пользователь.'''
-        if self.session.query(
-                self.KnownUsers).filter_by(
-                username=user).count():
-            return True
-        else:
-            return False
+        return bool(
+            self.session.query(self.KnownUsers).filter_by(username=user).count()
+        )
 
     def check_contact(self, contact):
         '''Метод проверяющий существует ли контакт.'''
-        if self.session.query(self.Contacts).filter_by(name=contact).count():
-            return True
-        else:
-            return False
+        return bool(self.session.query(self.Contacts).filter_by(name=contact).count())
 
     def get_history(self, contact):
         '''Метод возвращающий историю сообщений с определённым пользователем.'''

@@ -46,7 +46,7 @@ class MessageProcessor(threading.Thread):
         self.running = True
 
         # Словарь содержащий сопоставленные имена и соответствующие им сокеты.
-        self.names = dict()
+        self.names = {}
 
         # Конструктор предка
         super().__init__()
@@ -56,6 +56,8 @@ class MessageProcessor(threading.Thread):
         # Инициализация Сокета
         self.init_socket()
 
+        send_data_lst = []
+        err_lst = []
         # Основной цикл программы сервера
         while self.running:
             # Ждём подключения, если таймаут вышел, ловим исключение.
@@ -69,8 +71,6 @@ class MessageProcessor(threading.Thread):
                 self.clients.append(client)
 
             recv_data_lst = []
-            send_data_lst = []
-            err_lst = []
             # Проверяем на наличие ждущих клиентов
             try:
                 if self.clients:
@@ -86,7 +86,7 @@ class MessageProcessor(threading.Thread):
                         self.process_client_message(
                             get_message(client_with_message), client_with_message)
                     except (OSError, json.JSONDecodeError, TypeError) as err:
-                        logger.debug(f'Getting data from client exception.', exc_info=err)
+                        logger.debug('Getting data from client exception.', exc_info=err)
                         self.remove_client(client_with_message)
 
     def remove_client(self, client):
@@ -130,7 +130,7 @@ class MessageProcessor(threading.Thread):
                     f'Отправлено сообщение пользователю {message[DESTINATION]} от пользователя {message[SENDER]}.')
             except OSError:
                 self.remove_client(message[DESTINATION])
-        elif message[DESTINATION] in self.names and self.names[message[DESTINATION]] not in self.listen_sockets:
+        elif message[DESTINATION] in self.names:
             logger.error(
                 f'Связь с клиентом {message[DESTINATION]} была потеряна. Соединение закрыто, доставка невозможна.')
             self.remove_client(self.names[message[DESTINATION]])
@@ -147,7 +147,6 @@ class MessageProcessor(threading.Thread):
             # Если сообщение о присутствии то вызываем функцию авторизации.
             self.autorize_user(message, client)
 
-        # Если это сообщение, то отправляем его получателю.
         elif ACTION in message and message[ACTION] == MESSAGE and DESTINATION in message and TIME in message \
                 and SENDER in message and MESSAGE_TEXT in message and self.names[message[SENDER]] == client:
             if message[DESTINATION] in self.names:
@@ -167,12 +166,10 @@ class MessageProcessor(threading.Thread):
                     pass
             return
 
-        # Если клиент выходит
         elif ACTION in message and message[ACTION] == EXIT and ACCOUNT_NAME in message \
                 and self.names[message[ACCOUNT_NAME]] == client:
             self.remove_client(client)
 
-        # Если это запрос контакт-листа
         elif ACTION in message and message[ACTION] == GET_CONTACTS and USER in message and \
                 self.names[message[USER]] == client:
             response = RESPONSE_202
@@ -182,7 +179,6 @@ class MessageProcessor(threading.Thread):
             except OSError:
                 self.remove_client(client)
 
-        # Если это добавление контакта
         elif ACTION in message and message[ACTION] == ADD_CONTACT and ACCOUNT_NAME in message and USER in message \
                 and self.names[message[USER]] == client:
             self.database.add_contact(message[USER], message[ACCOUNT_NAME])
@@ -191,7 +187,6 @@ class MessageProcessor(threading.Thread):
             except OSError:
                 self.remove_client(client)
 
-        # Если это удаление контакта
         elif ACTION in message and message[ACTION] == REMOVE_CONTACT and ACCOUNT_NAME in message and USER in message \
                 and self.names[message[USER]] == client:
             self.database.remove_contact(message[USER], message[ACCOUNT_NAME])
@@ -200,7 +195,6 @@ class MessageProcessor(threading.Thread):
             except OSError:
                 self.remove_client(client)
 
-        # Если это запрос известных пользователей
         elif ACTION in message and message[ACTION] == USERS_REQUEST and ACCOUNT_NAME in message \
                 and self.names[message[ACCOUNT_NAME]] == client:
             response = RESPONSE_202
@@ -211,26 +205,18 @@ class MessageProcessor(threading.Thread):
             except OSError:
                 self.remove_client(client)
 
-        # Если это запрос публичного ключа пользователя
         elif ACTION in message and message[ACTION] == PUBLIC_KEY_REQUEST and ACCOUNT_NAME in message:
             response = RESPONSE_511
             response[DATA] = self.database.get_pubkey(message[ACCOUNT_NAME])
             # может быть, что ключа ещё нет (пользователь никогда не логинился,
             # тогда шлём 400)
-            if response[DATA]:
-                try:
-                    send_message(client, response)
-                except OSError:
-                    self.remove_client(client)
-            else:
+            if not response[DATA]:
                 response = RESPONSE_400
                 response[ERROR] = 'Нет публичного ключа для данного пользователя'
-                try:
-                    send_message(client, response)
-                except OSError:
-                    self.remove_client(client)
-
-        # Иначе отдаём Bad request
+            try:
+                send_message(client, response)
+            except OSError:
+                self.remove_client(client)
         else:
             response = RESPONSE_400
             response[ERROR] = 'Запрос некорректен.'
@@ -251,10 +237,8 @@ class MessageProcessor(threading.Thread):
                 send_message(sock, response)
             except OSError:
                 logger.debug('OS Error')
-                pass
             self.clients.remove(sock)
             sock.close()
-        # Проверяем что пользователь зарегистрирован на сервере.
         elif not self.database.check_user(message[USER][ACCOUNT_NAME]):
             response = RESPONSE_400
             response[ERROR] = 'Пользователь не зарегистрирован.'

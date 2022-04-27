@@ -54,7 +54,7 @@ class Server(Thread, metaclass=ServerMaker):
         self.messages = []
 
         # Словарь содержащий сопоставленные имена и соответствующие им сокеты.
-        self.names = dict()
+        self.names = {}
 
         # Конструктор предка
         super().__init__()
@@ -131,7 +131,7 @@ class Server(Thread, metaclass=ServerMaker):
             send_message(self.names[message[DESTINATION]], message)
             SERVER_LOGGER.info(f'Отправлено сообщение пользователю {message[DESTINATION]} '
                                f'от пользователя {message[SENDER]}.')
-        elif message[DESTINATION] in self.names and self.names[message[DESTINATION]] not in listen_socks:
+        elif message[DESTINATION] in self.names:
             raise ConnectionError
         else:
             SERVER_LOGGER.error(
@@ -168,28 +168,26 @@ class Server(Thread, metaclass=ServerMaker):
                 send_message(client, response)
                 self.clients.remove(client)
                 client.close()
-            return
-            # Если это сообщение, то добавляем его в очередь сообщений.
-            # Ответ не требуется.
+                # Если это сообщение, то добавляем его в очередь сообщений.
+                # Ответ не требуется.
         elif ACTION in message and message[ACTION] == MESSAGE and \
                 DESTINATION in message and TIME in message \
                 and SENDER in message and MESSAGE_TEXT in message:
             self.messages.append(message)
-            return
-            # Если клиент выходит
+                # Если клиент выходит
         elif ACTION in message and message[ACTION] == EXIT and ACCOUNT_NAME in message:
             # отправка в базу данных
             self.database.user_logout(message[ACCOUNT_NAME])
             self.clients.remove(self.names[message[ACCOUNT_NAME]])
             self.names[message[ACCOUNT_NAME]].close()
             del self.names[message[ACCOUNT_NAME]]
-            return
-            # Иначе отдаём Bad request
+                # Иначе отдаём Bad request
         else:
             response = RESPONSE_400
             response[ERROR] = 'Запрос некорректен.'
             send_message(client, response)
-            return
+
+        return
 
 
 def print_help():

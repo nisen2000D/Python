@@ -44,26 +44,24 @@ def process_client_message(client_socket, messages_list, client, clients_list, n
             send_message(client, response)
             clients_list.remove(client)
             client.close()
-        return
-        # Если это сообщение, то добавляем его в очередь сообщений.
-        # Ответ не требуется.
+            # Если это сообщение, то добавляем его в очередь сообщений.
+            # Ответ не требуется.
     elif ACTION in client_socket and client_socket[ACTION] == MESSAGE and \
             DESTINATION in client_socket and TIME in client_socket \
             and SENDER in client_socket and MESSAGE_TEXT in client_socket:
         messages_list.append(client_socket)
-        return
-        # Если клиент выходит
+            # Если клиент выходит
     elif ACTION in client_socket and client_socket[ACTION] == EXIT and ACCOUNT_NAME in client_socket:
         clients_list.remove(names[client_socket[ACCOUNT_NAME]])
         names[client_socket[ACCOUNT_NAME]].close()
         del names[client_socket[ACCOUNT_NAME]]
-        return
-        # Иначе отдаём Bad request
+            # Иначе отдаём Bad request
     else:
         response = RESPONSE_400
         response[ERROR] = 'Запрос некорректен.'
         send_message(client, response)
-        return
+
+    return
 
 
 @log
@@ -80,7 +78,7 @@ def process_message(message, names, listen_socks):
         send_message(names[message[DESTINATION]], message)
         SERVER_LOGGER.info(f'Отправлено сообщение пользователю {message[DESTINATION]} '
                            f'от пользователя {message[SENDER]}.')
-    elif message[DESTINATION] in names and names[message[DESTINATION]] not in listen_socks:
+    elif message[DESTINATION] in names:
         raise ConnectionError
     else:
         SERVER_LOGGER.error(
@@ -132,7 +130,7 @@ def main():
     messages_list = []
 
     # Словарь, содержащий имена пользователей и соответствующие им сокеты.
-    names = dict()
+    names = {}
 
     # Слушаем порт
     server_socket.listen(MAX_CONNECTIONS)

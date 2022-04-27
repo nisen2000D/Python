@@ -61,7 +61,7 @@ class Server(Thread, metaclass=ServerMaker):
         self.messages = []
 
         # Словарь содержащий сопоставленные имена и соответствующие им сокеты.
-        self.names = dict()
+        self.names = {}
 
         # Конструктор предка
         super().__init__()
@@ -130,7 +130,7 @@ class Server(Thread, metaclass=ServerMaker):
                     for message in self.messages:
                         try:
                             self.process_message(message, send_data_lst)
-                        except (ConnectionAbortedError, ConnectionError, ConnectionResetError, ConnectionRefusedError):
+                        except ConnectionError:
                             SERVER_LOGGER.info(f'Связь с клиентом с именем {message[DESTINATION]} была потеряна')
                             self.clients.remove(self.names[message[DESTINATION]])
                             self.database.user_logout(message[DESTINATION])
@@ -151,7 +151,7 @@ class Server(Thread, metaclass=ServerMaker):
             send_message(self.names[message[DESTINATION]], message)
             SERVER_LOGGER.info(f'Отправлено сообщение пользователю {message[DESTINATION]} '
                                f'от пользователя {message[SENDER]}.')
-        elif message[DESTINATION] in self.names and self.names[message[DESTINATION]] not in listen_socks:
+        elif message[DESTINATION] in self.names:
             raise ConnectionError
         else:
             SERVER_LOGGER.error(
@@ -272,17 +272,15 @@ class Server(Thread, metaclass=ServerMaker):
 def config_load():
     config = configparser.ConfigParser()
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    config.read(f"{dir_path}/{'server.ini'}")
+    config.read(f"{dir_path}/server.ini")
     # Если конфиг файл загружен правильно, запускаемся, иначе конфиг по умолчанию.
-    if 'SETTINGS' in config:
-        return config
-    else:
+    if 'SETTINGS' not in config:
         config.add_section('SETTINGS')
         config.set('SETTINGS', 'Default_port', str(DEFAULT_PORT))
         config.set('SETTINGS', 'Listen_Address', '')
         config.set('SETTINGS', 'Database_path', '')
         config.set('SETTINGS', 'Database_file', 'server_database.db3')
-        return config
+    return config
 
 
 def main():
