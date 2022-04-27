@@ -139,18 +139,13 @@ class ServerStorage:
         # именем
         rez = self.session.query(self.AllUsers).filter_by(name=username)
 
-        # Если имя пользователя уже присутствует в таблице, обновляем время последнего входа
-        # и проверяем корректность ключа. Если клиент прислал новый ключ,
-        # сохраняем его.
-        if rez.count():
-            user = rez.first()
-            user.last_login = datetime.datetime.now()
-            if user.pubkey != key:
-                user.pubkey = key
-        # Если нету, то генерируем исключение
-        else:
+        if not rez.count():
             raise ValueError('Пользователь не зарегистрирован.')
 
+        user = rez.first()
+        user.last_login = datetime.datetime.now()
+        if user.pubkey != key:
+            user.pubkey = key
         # Теперь можно создать запись в таблицу активных пользователей о факте
         # входа.
         new_active_user = self.ActiveUsers(
@@ -202,10 +197,7 @@ class ServerStorage:
 
     def check_user(self, name):
         '''Метод проверяющий существование пользователя.'''
-        if self.session.query(self.AllUsers).filter_by(name=name).count():
-            return True
-        else:
-            return False
+        return bool(self.session.query(self.AllUsers).filter_by(name=name).count())
 
     def user_logout(self, username):
         '''Метод фиксирующий отключения пользователя.'''

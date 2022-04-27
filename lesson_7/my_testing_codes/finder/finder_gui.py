@@ -79,9 +79,9 @@ class ProgressDialog(QtWidgets.QDialog):
     def update_results(self, data):
         """ Отображение результатов поиска
         """
-        self.ui.plainTextEdit.appendPlainText("++ {} ++".format(data[0]))
+        self.ui.plainTextEdit.appendPlainText(f"++ {data[0]} ++")
         for text in data[1]:
-            self.ui.plainTextEdit.appendPlainText(" " + text)
+            self.ui.plainTextEdit.appendPlainText(f" {text}")
         self.ui.plainTextEdit.appendPlainText("")
 
     @pyqtSlot()

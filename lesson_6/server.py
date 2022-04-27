@@ -39,18 +39,16 @@ def config_load():
     """Парсер конфигурационного ini файла."""
     config = configparser.ConfigParser()
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    config.read(f"{dir_path}/{'server.ini'}")
+    config.read(f"{dir_path}/server.ini")
     # Если конфиг файл загружен правильно, запускаемся, иначе конфиг по
     # умолчанию.
-    if 'SETTINGS' in config:
-        return config
-    else:
+    if 'SETTINGS' not in config:
         config.add_section('SETTINGS')
         config.set('SETTINGS', 'Default_port', str(DEFAULT_PORT))
         config.set('SETTINGS', 'Listen_Address', '')
         config.set('SETTINGS', 'Database_path', '')
         config.set('SETTINGS', 'Database_file', 'server_database.db3')
-        return config
+    return config
 
 
 @log

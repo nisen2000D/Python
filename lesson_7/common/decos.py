@@ -93,9 +93,12 @@ def login_required(func):
             # Теперь надо проверить, что передаваемые аргументы не presence
             # сообщение. Если presense, то разрешаем
             for arg in args:
-                if isinstance(arg, dict):
-                    if ACTION in arg and arg[ACTION] == PRESENCE:
-                        found = True
+                if (
+                    isinstance(arg, dict)
+                    and ACTION in arg
+                    and arg[ACTION] == PRESENCE
+                ):
+                    found = True
             # Если не не авторизован и не сообщение начала авторизации, то
             # вызываем исключение.
             if not found:

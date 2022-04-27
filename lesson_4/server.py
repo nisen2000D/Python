@@ -65,7 +65,7 @@ class Server(Thread, metaclass=ServerMaker):
         self.messages = []
 
         # Словарь содержащий сопоставленные имена и соответствующие им сокеты.
-        self.names = dict()
+        self.names = {}
 
         # Конструктор предка
         super().__init__()
@@ -131,7 +131,7 @@ class Server(Thread, metaclass=ServerMaker):
                     for message in self.messages:
                         try:
                             self.process_message(message, send_data_lst)
-                        except (ConnectionAbortedError, ConnectionError, ConnectionResetError, ConnectionRefusedError):
+                        except ConnectionError:
                             SERVER_LOGGER.info(f'Связь с клиентом с именем {message[DESTINATION]} была потеряна')
                             self.clients.remove(self.names[message[DESTINATION]])
                             self.database.user_logout(message[DESTINATION])
@@ -150,7 +150,7 @@ class Server(Thread, metaclass=ServerMaker):
             send_message(self.names[message[DESTINATION]], message)
             SERVER_LOGGER.info(f'Отправлено сообщение пользователю {message[DESTINATION]} '
                                f'от пользователя {message[SENDER]}.')
-        elif message[DESTINATION] in self.names and self.names[message[DESTINATION]] not in listen_socks:
+        elif message[DESTINATION] in self.names:
             raise ConnectionError
         else:
             SERVER_LOGGER.error(
