@@ -41,21 +41,21 @@ class ServerMaker(type):
                     # i - Instruction(opname='LOAD_GLOBAL', opcode=116, arg=9, argval='send_message',
                     # argrepr='send_message', offset=308, starts_line=201, is_jump_target=False)
                     # opname - имя для операции
-                    if i.opname == 'LOAD_GLOBAL':
-                        if i.argval not in methods:
-                            # заполняем список методами, использующимися в функциях класса
-                            methods.append(i.argval)
-                    elif i.opname == 'LOAD_ATTR':
+                    if i.opname == 'LOAD_ATTR':
                         if i.argval not in attrs:
                             # заполняем список атрибутами, использующимися в функциях класса
                             attrs.append(i.argval)
+                    elif i.opname == 'LOAD_GLOBAL':
+                        if i.argval not in methods:
+                            # заполняем список методами, использующимися в функциях класса
+                            methods.append(i.argval)
         # print(f'methods: {methods}')
         # print(f'attrs: {attrs}')
         # Если обнаружено использование недопустимого метода connect, бросаем исключение:
         if 'connect' in methods:
             raise TypeError('Использование метода connect недопустимо в серверном классе')
         # Если сокет не инициализировался константами SOCK_STREAM(TCP) AF_INET(IPv4), тоже исключение.
-        if not ('SOCK_STREAM' in methods and 'AF_INET' in methods):
+        if 'SOCK_STREAM' not in methods or 'AF_INET' not in methods:
             raise TypeError('Некорректная инициализация сокета.')
         # Обязательно вызываем конструктор предка:
         super().__init__(clsname, bases, clsdict)
@@ -76,17 +76,14 @@ class ClientMaker(type):
             else:
                 # Раз функция разбираем код, получая используемые методы.
                 for i in ret:
-                    if i.opname == 'LOAD_GLOBAL':
-                        if i.argval not in methods:
-                            methods.append(i.argval)
+                    if i.opname == 'LOAD_GLOBAL' and i.argval not in methods:
+                        methods.append(i.argval)
         # Если обнаружено использование недопустимого метода accept, listen, socket бросаем исключение:
         for command in ('accept', 'listen', 'socket'):
             if command in methods:
                 raise TypeError('В классе обнаружено использование запрещённого метода')
         # Вызов get_message или send_message из utils считаем корректным использованием сокетов
         # print(methods)
-        if 'get_message' in methods or 'send_message' in methods:
-            pass
-        else:
+        if 'get_message' not in methods and 'send_message' not in methods:
             raise TypeError('Отсутствуют вызовы функций, работающих с сокетами.')
         super().__init__(clsname, bases, clsdict)
